@@ -36,7 +36,7 @@
 > *Note: Build Jobs can trigger downstream deploy Jobs which are gated by user input if desired.  The configuration for all of this is stored in the corresponding GIT deploy projects, which are maintained by the DevOps and ProdOps teams.  The use of Merge Requests allows a developer the ability to make deployment changes, which are peer reviewed.*
 
 ### Gitlab
-* Groups:  Groups are Top Level Namespaces created from the **team-name** provided by the Project Manager.  The house all the build projects for a particular team.  ex.  /demo-team/com.rxcorp.ss.webapp\_art\_build    
+* Groups:  Groups are Top Level Namespaces created from the **team-name** provided by the Project Manager.  They house all the build projects for a particular team.  ex.  /demo-team/com.rxcorp.ss.webapp\_art\_build    
     * Access Levels:  Each group has the following 5 AccessLevels:
       * Owner
       * Master
@@ -59,7 +59,7 @@
   * Allocate a Blob store per each the Dev, and Prod Environments.  This simplicity comes with a negative, in the event of failure, the failure domain is larger, possibly effecting all objects per store.
 
 
-* Repositories / Registries: Repositories and Registries in Nexus differ depending on the client consuming them, but will share Blob stores if configured so.  The indexing of objects of objects is handled by the elastic search library.   Users interface at the Repository/Registry level and as Operators we can apply RBAC at this level along with the WebUI. Nexus has the ability to triger events per repository,  if namespaced properly, these repository / registry events can be used to trigger downstream actions ( Think Stackstorm, Jenkins, "http -X POST" ).  I am biased, and believe in less complexity leads to less failures,  and believe we should be using the raw namespace and use simple unix tools to keep the model simpler, instead of attaching useless metadata to our objects.   
+* Repositories / Registries: Repositories and Registries in Nexus differ depending on the client consuming them, but will share Blob stores if configured so.  The indexing of objects of objects is handled by the elastic search library.   Users interface at the Repository/Registry level and as Operators we can apply RBAC at this level along with the WebUI. Nexus has the ability to trigger events per repository,  if namespaced properly, these repository / registry events can be used to trigger downstream actions ( Think Stackstorm, Jenkins, "http -X POST" ).  I am biased, and believe in less complexity leads to less failures,  and believe we should be using the raw namespace and use simple unix tools to keep the model simpler, instead of attaching useless metadata to our objects.   
   * Docker Registries:
     * Giving each team their own Isolated Docker registry will most likely not be possible due do the fact that we would need to update the docker.tar.gz on every mesosphere agent everytime we update / add a team.  (Built into triton lawlbladez, /slapsknee)  We could probably pull this off, but will require further planning.  For example, use pass the URI as a runtime variable so that each team can only access their registry.    
     *  Must make a choice on this.  Dev Registry and Prod Registry only?
