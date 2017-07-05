@@ -9,7 +9,7 @@
   * ex. Nexus Roles, which give access to Repositories/Registries : **INTERNAL\Demo-Developers**
 
 2.  Project-Name: **com.rxcorp.ss.webapp\_art_build**.
-  * Are Required to be of the following type.  
+  * Are Required to be of the following type.
     * art_build: Used to build and publish an artifact into nexus. Artifact builds require a *Publish Credential*  which current is an AD Service account. ex. **INTERNAL\CDTASVC-JEN_DEMO-D**
     * docker_build: Used to build and publish an docker image into nexus.  Docker builds also require the need of this account.
     * **env**_deploy: Used to deploy an image / artifact into an environment.   **env** describes the environment you are deploying into and can be: *devl, sit, uacc, prod* . Deploy Jobs  require a service account per environment.
@@ -36,14 +36,14 @@
 > *Note: Build Jobs can trigger downstream deploy Jobs which are gated by user input if desired.  The configuration for all of this is stored in the corresponding GIT deploy projects, which are maintained by the DevOps and ProdOps teams.  The use of Merge Requests allows a developer the ability to make deployment changes, which are peer reviewed.*
 
 ### Gitlab
-* Groups:  Groups are Top Level Namespaces created from the **team-name** provided by the Project Manager.  They house all the build projects for a particular team.  ex.  /demo-team/com.rxcorp.ss.webapp\_art\_build    
+* Groups:  Groups are Top Level Namespaces created from the **team-name** provided by the Project Manager.  They house all the build projects for a particular team.  ex.  /demo-team/com.rxcorp.ss.webapp\_art\_build
     * Access Levels:  Each group has the following 5 AccessLevels:
       * Owner
       * Master
       * Developer
       * Reporter
       * Guest
-* Projects:  Projects inherit RBAC from their parent Groups.  Projects can also have local security settings.  Projects normally map 1 to 1 with their corresponding Jenkins Jobs. Currently there is **no official process** in regards to obtaining a project.  How do we educate about the following types of projects.     
+* Projects:  Projects inherit RBAC from their parent Groups.  Projects can also have local security settings.  Projects normally map 1 to 1 with their corresponding Jenkins Jobs. Currently there is **no official process** in regards to obtaining a project.  How do we educate about the following types of projects.
   * Build Projects:
     * Owned by the developers
     * Only Produce artifacts that are published into their corresponding Nexus namespace.
@@ -59,12 +59,12 @@
   * Allocate a Blob store per each the Dev, and Prod Environments.  This simplicity comes with a negative, in the event of failure, the failure domain is larger, possibly effecting all objects per store.
 
 
-* Repositories / Registries: Repositories and Registries in Nexus differ depending on the client consuming them, but will share Blob stores if configured so.  The indexing of objects of objects is handled by the elastic search library.   Users interface at the Repository/Registry level and as Operators we can apply RBAC at this level along with the WebUI. Nexus has the ability to trigger events per repository,  if namespaced properly, these repository / registry events can be used to trigger downstream actions ( Think Stackstorm, Jenkins, "http -X POST" ).  I am biased, and believe in less complexity leads to less failures,  and believe we should be using the raw namespace and use simple unix tools to keep the model simpler, instead of attaching useless metadata to our objects.   
+* Repositories / Registries: Repositories and Registries in Nexus differ depending on the client consuming them, but will share Blob stores if configured so.  The indexing of objects of objects is handled by the elastic search library.   Users interface at the Repository/Registry level and as Operators we can apply RBAC at this level along with the WebUI. Nexus has the ability to trigger events per repository,  if namespaced properly, these repository / registry events can be used to trigger downstream actions ( Think Stackstorm, Jenkins, "http -X POST" ).  I am biased, and believe in less complexity leads to less failures,  and believe we should be using the raw namespace and use simple unix tools to keep the model simpler, instead of attaching useless metadata to our objects.
   * Docker Registries:
-    * Giving each team their own Isolated Docker registry will most likely not be possible due do the fact that we would need to update the docker.tar.gz on every mesosphere agent everytime we update / add a team.  (Built into triton lawlbladez, /slapsknee)  We could probably pull this off, but will require further planning.  For example, use pass the URI as a runtime variable so that each team can only access their registry.    
+    * Giving each team their own Isolated Docker registry will most likely not be possible due do the fact that we would need to update the docker.tar.gz on every mesosphere agent everytime we update / add a team.  (Built into triton lawlbladez, /slapsknee)  We could probably pull this off, but will require further planning.  For example, use pass the URI as a runtime variable so that each team can only access their registry.
     *  Must make a choice on this.  Dev Registry and Prod Registry only?
   * NPM Registry:
-    * NPM registries can be name spaced per team.   
+    * NPM registries can be name spaced per team.
   * Maven/Scala Repository:
     * Maven Registries I believe can be name spaced per team.
   * RAW:
@@ -72,7 +72,7 @@
   * RBAC: Role based access contorl in Nexus allows you to create a Role and add registries / repositories under said Role.  If we want to support all varients, we will need to map the Team-Name (AD Group) to it's Role in Nexus. Scenario: Demo-Team Requires NPM (*nodejs*), Maven(*scala*, *java*), and Raw (*raw artifacts ex. JDK version.tar.gz*).
     1. Map Team-Name to Role: ADGroup: **INTERNAL\Demo-Developers** -> Demo-Team-Artifacts
     2. Nest **Demo-Team-NPM**, **Demo-Team-Maven**, **Demo-Team-RAW**, Under the **Demo-Team-Artifacts** Role.
-    3. Nest the Proper WebUI Roles/Permissions also on the **Demo-Team-Artifacts** Role.   
+    3. Nest the Proper WebUI Roles/Permissions also on the **Demo-Team-Artifacts** Role.
 
 
 ### DC/OS Marathon Services
@@ -84,7 +84,7 @@
   * /prod/team-name/project-name_prod
 
 
-### DC/OS Secrets  
+### DC/OS Secrets
 * DC/OS Secrets: This namespace should clone and the Marathon Services and Jenkins Deploy namespace for a few reasons.
   * Marathon Services can natively access their corresponding Secrets namespace.
     * ex. /foo/bar/baz can access /foo/bar/baz
@@ -95,7 +95,7 @@
 *  NFS Folder Structure:  The NFS Folder Structure should replicate the DC/OS Marathon Service Namespace.   This will allow an operator to find the data, and allow for easier Gitlab Merge Request review.  *ex. A marathon.json volume mapping should not be accessing different levels / namespaces on the NFS Mount.  **Marathon**: /devl/foo_service/frontend -> **NFS**: /uacc/bar_service/backend*
 This is wrong for 3 reasons, **devl** is trying tom map **uacc** data, and the **foo** service is trying to access the **bar** service, and the **frontend** service is trying to access data from the **backend** service.  I cannot stress enough that this needs to be peer reviewed, or we will shoot our own foot off.
 
->Disclaimer: I, Bruce Smith, disagree with my upmost ability about using NFS for all of our storage.  This will only lead to disaster.  We have already seen an 18 Hour Outage due to a User Error Network Partition.   Shared Storage has a place... maybe... but for any distributed service depending on a "centralized, network storage solution" is not really Distributed now is it?  Data replication and high availability should be handle in the application tier  and not by magical block stores.    
+>Disclaimer: I, Bruce Smith, disagree with my upmost ability about using NFS for all of our storage.  This will only lead to disaster.  We have already seen an 18 Hour Outage due to a User Error Network Partition.   Shared Storage has a place... maybe... but for any distributed service depending on a "centralized, network storage solution" is not really Distributed now is it?  Data replication and high availability should be handle in the application tier  and not by magical block stores.
 
 ### On-Boarding LifeCycle for a Project
 * Initial Information Required:
